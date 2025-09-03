@@ -6,6 +6,7 @@ package modelo;
 
 // arquivo Usuario.java
 
+
 public class Usuario {
     private int id;
     private String nome;
@@ -16,9 +17,8 @@ public class Usuario {
     private String senha;
     private String perfil;
 
-    // Construtor completo (sem ID - útil para criar antes de salvar no BD)
-    public Usuario(String nome, String cpf, String email, String cargo,
-                   String login, String senha, String perfil) {
+    // Construtor completo (sem ID)
+    public Usuario(String nome, String cpf, String email, String cargo, String login, String senha, String perfil) {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
@@ -28,8 +28,8 @@ public class Usuario {
         this.perfil = perfil;
     }
 
-    // Construtor com ID (útil para consultas do BD)
-    public Usuario(int id, String nome, String cpf, String email) {
+    // Construtor com ID
+    public Usuario(int id, String nome, String cpf, String email, String cargo, String login, String senha, String perfil) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;

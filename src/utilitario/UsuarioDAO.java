@@ -34,8 +34,13 @@ public class UsuarioDAO {
                         rs.getInt("id_usuario"),
                         rs.getString("nome"),
                         rs.getString("cpf"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("cargo"),
+                        rs.getString("login"),
+                        rs.getString("senha"),
+                        rs.getString("perfil")
                 ));
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,14 +49,18 @@ public class UsuarioDAO {
     }
 
     public void adicionar(Usuario usuario) {
-        String sql = "INSERT INTO Usuario (nome, cpf, email, cargo, login, senha, perfil) VALUES (?, ?, ?, 'Estudante', ?, 'senha123', 'COLABORADOR')";
+        String sql = "INSERT INTO Usuario (nome, cpf, email, cargo, login, senha, perfil) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, usuario.getNome());
             pst.setString(2, usuario.getCpf());
             pst.setString(3, usuario.getEmail());
-            pst.setString(4, usuario.getNome().toLowerCase());
+            pst.setString(4, usuario.getCargo());
+            pst.setString(5, usuario.getLogin());
+            pst.setString(6, usuario.getSenha());
+            pst.setString(7, usuario.getPerfil());
+
             pst.executeUpdate();
 
         } catch (SQLException e) {

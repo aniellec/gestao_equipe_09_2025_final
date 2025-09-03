@@ -62,9 +62,13 @@ public class UsuarioSwing {
             String senha = new String(senhaField.getPassword());
             String perfil = (String) perfilBox.getSelectedItem();
 
-            dao.adicionar(new Usuario(nome, cpf, email, cargo, login, senha, perfil));
+            Usuario usuario = new Usuario(nome, cpf, email, cargo, login, senha, perfil);
+
+            dao.adicionar(usuario);
+
             atualizarLista();
         });
+
         inputPanel.add(addButton);
 
         JButton deleteButton = new JButton("Deletar por ID");
