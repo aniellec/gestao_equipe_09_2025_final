@@ -9,28 +9,40 @@ import java.util.List;
 
 public class UsuarioDAO {
 
-    //private static final String URL = "jdbc:mysql://sql.freedb.com:3306/freedb_aniellecasagrande";
-    //private static final String USER = "freedb_aniellecasagrande";
-    //private static final String PASSWORD = "ST5zkvjBAk%2cf4";
+    // Adicionar novo usuário
+    public boolean adicionar(Usuario u) {
+        String sql = "INSERT INTO Usuario (nome, cpf, email, cargo, login, senha, perfil) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    private static final String URL = "jdbc:mysql://docequotidiano.com.br:3306/doceq065_gestao_projetos_0825";
-    private static final String USER = "doceq065_gestao_projetos_0825";
-    private static final String PASSWORD = "gestao_projetos_0825";
+            stmt.setString(1, u.getNome());
+            stmt.setString(2, u.getCpf());
+            stmt.setString(3, u.getEmail());
+            stmt.setString(4, u.getCargo());
+            stmt.setString(5, u.getLogin());
+            stmt.setString(6, u.getSenha()); // ideal: usar hash
+            stmt.setString(7, u.getPerfil());
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    // Listar todos os usuários
     public List<Usuario> listar() {
-        List<Usuario> usuarios = new ArrayList<>();
+        List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT * FROM Usuario";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = ConexaoDB.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                usuarios.add(new Usuario(
+                Usuario u = new Usuario(
                         rs.getInt("id_usuario"),
                         rs.getString("nome"),
                         rs.getString("cpf"),
@@ -39,45 +51,62 @@ public class UsuarioDAO {
                         rs.getString("login"),
                         rs.getString("senha"),
                         rs.getString("perfil")
-                ));
-
+                );
+                lista.add(u);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return usuarios;
-    }
-
-    public void adicionar(Usuario usuario) {
-        String sql = "INSERT INTO Usuario (nome, cpf, email, cargo, login, senha, perfil) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
-
-            pst.setString(1, usuario.getNome());
-            pst.setString(2, usuario.getCpf());
-            pst.setString(3, usuario.getEmail());
-            pst.setString(4, usuario.getCargo());
-            pst.setString(5, usuario.getLogin());
-            pst.setString(6, usuario.getSenha());
-            pst.setString(7, usuario.getPerfil());
-
-            pst.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return lista;
     }
 
+    // Deletar usuário pelo ID
     public boolean deletar(int id) {
         String sql = "DELETE FROM Usuario WHERE id_usuario = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            pst.setInt(1, id);
-            return pst.executeUpdate() > 0;
+            stmt.setInt(1, id);
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Autenticar usuário (login e senha)
+    public Usuario autenticar(String login, String senha) {
+        String sql = "SELECT * FROM Usuario WHERE login = ? AND senha = ?";
+
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, login);
+            stmt.setString(2, senha);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("id_usuario"),
+                            rs.getString("nome"),
+                            rs.getString("cpf"),
+                            rs.getString("email"),
+                            rs.getString("cargo"),
+                            rs.getString("login"),
+                            rs.getString("senha"),
+                            rs.getString("perfil")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // login ou senha inválidos
     }
 }

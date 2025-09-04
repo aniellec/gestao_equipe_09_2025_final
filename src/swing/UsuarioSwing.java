@@ -71,7 +71,7 @@ public class UsuarioSwing {
 
         inputPanel.add(addButton);
 
-        JButton deleteButton = new JButton("Deletar por ID");
+        /*JButton deleteButton = new JButton("Deletar por ID");
         deleteButton.setMargin(new Insets(10, 20, 10, 20));
         deleteButton.addActionListener(e -> {
             String input = JOptionPane.showInputDialog("Digite o ID do usuário:");
@@ -87,7 +87,17 @@ public class UsuarioSwing {
             }
             atualizarLista();
         });
-        inputPanel.add(deleteButton);
+
+
+        inputPanel.add(deleteButton);*/
+
+        JButton loginButton = new JButton("Login");
+        loginButton.setMargin(new Insets(10, 20, 10, 20));
+        loginButton.addActionListener(e -> {
+            // Abre a tela de login
+            new LoginSwing().iniciar();
+        });
+        inputPanel.add(loginButton);
 
         frame.add(inputPanel, BorderLayout.SOUTH);
 

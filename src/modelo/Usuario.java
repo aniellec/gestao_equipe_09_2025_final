@@ -4,7 +4,6 @@ package modelo;
 // Nome completo, CPF, e-mail, cargo, login, senha.
 // perfil: administrador, gerente ou colaborador.
 
-// arquivo Usuario.java
 
 
 public class Usuario {
@@ -70,4 +69,6 @@ public class Usuario {
         return String.format("ID: %d | Nome: %s | CPF: %s | Cargo: %s | Perfil: %s",
                 id, nome, cpf, cargo, perfil);
     }
+
+
 }
