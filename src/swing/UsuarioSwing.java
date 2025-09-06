@@ -71,25 +71,7 @@ public class UsuarioSwing {
 
 
 
-        /*JButton deleteButton = new JButton("Deletar por ID");
-        deleteButton.setMargin(new Insets(10, 20, 10, 20));
-        deleteButton.addActionListener(e -> {
-            String input = JOptionPane.showInputDialog("Digite o ID do usuário:");
-            if (input != null && !input.isEmpty()) {
-                try {
-                    int id = Integer.parseInt(input);
-                    if (!dao.deletar(id)) {
-                        JOptionPane.showMessageDialog(null, "ID não encontrado!");
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "ID inválido!");
-                }
-            }
-            atualizarLista();
-        });
 
-
-        inputPanel.add(deleteButton);*/
 
         JButton loginButton = new JButton("Login");
         loginButton.setMargin(new Insets(10, 20, 10, 20));

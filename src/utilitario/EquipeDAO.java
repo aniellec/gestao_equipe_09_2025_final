@@ -117,7 +117,7 @@ public class EquipeDAO {
     }
 
     public void deletarEquipe(int idEquipe) throws SQLException {
-        String sql = "DELETE FROM equipe WHERE idEquipe = ?";
+        String sql = "DELETE FROM Equipe WHERE idEquipe = ?";
 
         try (Connection conn = ConexaoDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -125,6 +125,29 @@ public class EquipeDAO {
             stmt.executeUpdate();
         }
     }
+
+    public List<Equipe> listarEquipesPorUsuario(int idUsuario) throws SQLException {
+        List<Equipe> equipes = new ArrayList<>();
+        String sql = "SELECT e.* FROM Equipe e " +
+                "JOIN Equipe_usuario eu ON e.id_equipe = eu.id_equipe " +
+                "WHERE eu.id_usuario = ?";
+
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id_equipe");
+                    String nome = rs.getString("nome");
+                    String descricao = rs.getString("descricao");
+                    equipes.add(new Equipe(id, nome, descricao, new ArrayList<>(), new ArrayList<>()));
+                }
+            }
+        }
+        return equipes;
+    }
+
+
 
     // Atualizar equipe (nome, desc, membros, projetos)
     public void atualizarEquipe(Equipe equipe) throws SQLException {

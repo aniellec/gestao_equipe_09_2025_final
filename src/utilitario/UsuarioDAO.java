@@ -109,4 +109,14 @@ public class UsuarioDAO {
 
         return null; // login ou senha inválidos
     }
+
+
+    public void deletarUsuario(int idUsuario) throws SQLException {
+        String sql = "DELETE FROM Usuario WHERE id_usuario = ?";
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            stmt.executeUpdate();
+        }
+    }
 }

@@ -41,6 +41,12 @@ public class Projeto {
         this.nome = nome;
     }
 
+    public Projeto(int id, String nome, String status) {
+        this.id = id;
+        this.nome = nome;
+        this.status = status;
+    }
+
     // Getters
     public int getId() { return id; }
     public String getNome() { return nome; }

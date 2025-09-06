@@ -32,9 +32,73 @@ public class GerenteSwing {
 
         JButton listarUsuarios = new JButton("Usuários");
         listarUsuarios.addActionListener(e -> {
-            //JOptionPane.showMessageDialog(null, "Função listar usuários aqui!");
+            try {
+                // Pega todos os usuários do banco
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                List<Usuario> usuarios = usuarioDAO.listar();
+
+                // Cria a janela de listagem
+                JFrame frameUsuarios = new JFrame("Lista de Usuários");
+                frameUsuarios.setSize(400, 400);
+                frameUsuarios.setLayout(new BorderLayout());
+
+                // Cria o modelo da lista e adiciona os usuários
+                DefaultListModel<Usuario> modelUsuarios = new DefaultListModel<>();
+                for (Usuario u : usuarios) {
+                    modelUsuarios.addElement(u);
+                }
+
+                // JList com scroll
+                JList<Usuario> lista = new JList<>(modelUsuarios);
+                lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                JScrollPane scroll = new JScrollPane(lista);
+                frameUsuarios.add(scroll, BorderLayout.CENTER);
+
+                JButton btnDeletarUsu = new JButton("Deletar Usuário");
+                btnDeletarUsu.addActionListener(ev -> {
+                    Usuario selecionado = lista.getSelectedValue(); // 'lista' é a JList<Usuario>
+                    if (selecionado == null) {
+                        JOptionPane.showMessageDialog(frameUsuarios, "Selecione um usuário para deletar.");
+                        return;
+                    }
+
+                    int confirm = JOptionPane.showConfirmDialog(
+                            frameUsuarios,
+                            "Tem certeza que deseja excluir o usuário " + selecionado.getNome() + "?",
+                            "Confirmação",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            UsuarioDAO dao = new UsuarioDAO();
+                            dao.deletarUsuario(selecionado.getId()); // <- metodo no DAO
+                            // Atualiza a lista após exclusão
+                            modelUsuarios.removeElement(selecionado);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(frameUsuarios, "Erro ao deletar usuário: " + ex.getMessage());
+                        }
+                    }
+                });
+
+// Adiciona o botão no topo ou na parte inferior da tela
+                JPanel panelBotoesUsuarios = new JPanel();
+                panelBotoesUsuarios.setLayout(new FlowLayout());
+                panelBotoesUsuarios.add(btnDeletarUsu);
+                frameUsuarios.add(panelBotoesUsuarios, BorderLayout.SOUTH);
+
+
+                frameUsuarios.setLocationRelativeTo(null);
+                frameUsuarios.setVisible(true);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Erro ao carregar usuários: " + ex.getMessage());
+            }
         });
         panelBotoes.add(listarUsuarios);
+
 
 
         //JButton btnEquipes = new JButton("Equipes");

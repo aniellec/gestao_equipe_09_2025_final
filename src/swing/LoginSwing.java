@@ -54,12 +54,12 @@ public class LoginSwing {
                     new GerenteSwing().iniciar();
                     break;
                 case "ADMIN":
-                    // Aqui você pode chamar uma tela administrativa
-                    JOptionPane.showMessageDialog(null, "Tela de ADMIN ainda não implementada");
+                    //JOptionPane.showMessageDialog(null, "Tela de ADMIN ainda não implementada");
+                    new GerenteSwing().iniciar();
                     break;
                 case "COLABORADOR":
-                    // Aqui você pode chamar uma tela de colaborador
-                    JOptionPane.showMessageDialog(null, "Tela de COLABORADOR ainda não implementada");
+                    //JOptionPane.showMessageDialog(null, "Tela de COLABORADOR ainda não implementada");
+                    new ColaboradorSwing(usuarioLogado).iniciar();
                     break;
             }
 

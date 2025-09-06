@@ -191,5 +191,28 @@ public class ProjetoDAO {
         return projetos;
     }
 
+    public List<Projeto> listarProjetosPorUsuario(int idUsuario) throws SQLException {
+        List<Projeto> projetos = new ArrayList<>();
+        String sql = "SELECT p.* FROM Projeto p " +
+                "JOIN Equipe_projeto ep ON p.id_projeto = ep.id_projeto " +
+                "JOIN Equipe_usuario eu ON ep.id_equipe = eu.id_equipe " +
+                "WHERE eu.id_usuario = ?";
+
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id_projeto");
+                    String nome = rs.getString("nome");
+                    String status = rs.getString("status");
+                    projetos.add(new Projeto(id, nome, status));
+                }
+            }
+        }
+        return projetos;
+    }
+
+
 
 }
