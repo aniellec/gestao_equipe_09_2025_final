@@ -79,10 +79,10 @@ public class ProjetoSwing {
             }
             atualizarLista();
         });
-        inputPanel.add(addButton);
+
 
         // Botão deletar
-        JButton deleteButton = new JButton("Deletar por ID");
+        /*JButton deleteButton = new JButton("Deletar por ID");
         deleteButton.setMargin(new Insets(10, 20, 10, 20));
         deleteButton.addActionListener(e -> {
             String input = JOptionPane.showInputDialog("Digite o ID do projeto:");
@@ -98,7 +98,16 @@ public class ProjetoSwing {
             }
             atualizarLista();
         });
-        inputPanel.add(deleteButton);
+        inputPanel.add(deleteButton); */
+
+        JButton voltarButton = new JButton("Voltar");
+        voltarButton.addActionListener(e -> {
+            frame.dispose();
+            //new GerenteSwing().iniciar(); // volta para tela do gerente
+        });
+
+        inputPanel.add(voltarButton);
+        inputPanel.add(addButton);
 
         frame.add(inputPanel, BorderLayout.SOUTH);
 

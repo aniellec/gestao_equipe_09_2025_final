@@ -39,6 +39,11 @@ public class Usuario {
         this.perfil = perfil;
     }
 
+    public Usuario(int id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
     // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -63,6 +68,7 @@ public class Usuario {
 
     public String getPerfil() { return perfil; }
     public void setPerfil(String perfil) { this.perfil = perfil; }
+
 
     @Override
     public String toString() {

@@ -1,115 +1,155 @@
-package swing;
+// arquivo GerenteSwing.java
 
+package swing;
+import java.util.List;
+import java.util.ArrayList;
+import modelo.Usuario;
 import utilitario.ProjetoDAO;
+import utilitario.UsuarioDAO;
+import utilitario.EquipeDAO;
 import modelo.Projeto;
+import modelo.Equipe;
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
 
 public class GerenteSwing {
 
     private ProjetoDAO dao = new ProjetoDAO();
-    private JTextArea textArea;
-    private JTextField idField;
+    private JPanel listaProjetosPanel; // substitui o JTextArea
 
     public void iniciar() {
         JFrame frame = new JFrame("Área do Gerente");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 600);
+        frame.setSize(1000, 800);
         frame.setLayout(new BorderLayout());
         frame.setLocationRelativeTo(null);
 
-        JPanel panelBotoes = new JPanel(new GridLayout(4, 1, 10, 10)); // 4 botões
+        // Painel lateral de botões
+        JPanel panelBotoes = new JPanel(new GridLayout(4, 1, 10, 10));
         panelBotoes.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        // Botão 1: Listar Usuários
-        JButton listarUsuarios = new JButton("Listar Usuários");
+        JButton listarUsuarios = new JButton("Usuários");
         listarUsuarios.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Função listar usuários aqui!");
+            //JOptionPane.showMessageDialog(null, "Função listar usuários aqui!");
         });
         panelBotoes.add(listarUsuarios);
 
+
+        //JButton btnEquipes = new JButton("Equipes");
+        //btnEquipes.addActionListener(e -> {
+            //new EquipeSwing().iniciar(); // chama o metodo sem argumentos
+        //});
+        //panelBotoes.add(btnEquipes);
+
+        JButton listarEquipes = new JButton("Equipes");
+        listarEquipes.addActionListener(e -> {
+            try {
+                UsuarioDAO usuarioDAO = new UsuarioDAO();
+                ProjetoDAO projetoDAO = new ProjetoDAO();
+
+                List<Usuario> usuarios = usuarioDAO.listar();
+                List<Projeto> projetos = projetoDAO.listarProjetos();
+
+                new EquipeSwing().iniciar(usuarios, projetos);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Erro ao carregar dados: " + ex.getMessage());
+            }
+        });
+        panelBotoes.add(listarEquipes);
+
+
+
         JButton novoProjeto = new JButton("Novo Projeto");
         novoProjeto.addActionListener(e -> {
-            // Abre a tela de cadastro de projetos
             new ProjetoSwing().iniciar();
         });
         panelBotoes.add(novoProjeto);
 
+        frame.add(panelBotoes, BorderLayout.WEST);
 
-        // Botão 4: Listar Projetos
-        JButton listarProjetos = new JButton("Listar Projetos");
-        listarProjetos.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Função listar projetos aqui!");
-        });
-        panelBotoes.add(listarProjetos);
-
-        frame.add(panelBotoes, BorderLayout.CENTER);
-        frame.setVisible(true);
-
-        // Lista de projetos
-        textArea = new JTextArea();
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        // Painel central para lista de projetos
+        listaProjetosPanel = new JPanel();
+        listaProjetosPanel.setLayout(new BoxLayout(listaProjetosPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(listaProjetosPanel);
         frame.add(scrollPane, BorderLayout.CENTER);
 
-        // Painel de ações
-        JPanel actionPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        idField = new JTextField();
-
-        actionPanel.add(new JLabel("ID do Projeto:"));
-        actionPanel.add(idField);
-
-        JButton atualizarButton = new JButton("Atualizar Status");
-        atualizarButton.addActionListener(e -> {
-            try {
-                int id = Integer.parseInt(idField.getText());
-                Projeto projeto = dao.buscarPorId(id);
-                if (projeto != null) {
-                    String[] opcoes = {"Planejado", "Em Andamento", "Concluído", "Cancelado"};
-                    String novoStatus = (String) JOptionPane.showInputDialog(
-                            frame,
-                            "Escolha o novo status:",
-                            "Atualizar Status",
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            opcoes,
-                            projeto.getStatus()
-                    );
-                    if (novoStatus != null) {
-                        projeto.setStatus(novoStatus);
-                        dao.atualizar(projeto);
-                        atualizarLista();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Projeto não encontrado!");
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage());
-            }
-        });
-        actionPanel.add(atualizarButton);
-
-
-
-        frame.add(actionPanel, BorderLayout.SOUTH);
-
         frame.setVisible(true);
+
         atualizarLista();
     }
 
     private void atualizarLista() {
-        textArea.setText("");
-        for (Projeto p : dao.listar()) {
-            textArea.append(p + "\n");
-        }
-        idField.setText("");
-    }
+        listaProjetosPanel.removeAll();
 
-    private void abrirTelaNovoProjeto() {
-        // Aqui você pode abrir uma nova tela para criar projetos
-        JOptionPane.showMessageDialog(null, "Abrir tela de criação de projeto");
-        // ou criar um JFrame/JDialog específico para cadastrar projeto
+
+
+        for (Projeto p : dao.listar()) {
+            JPanel projetoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            projetoPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+
+            JLabel label = new JLabel(
+                    "ID: " + p.getId() +
+                            " | Nome: " + p.getNome() +
+                            " | Status: " + p.getStatus()
+            );
+
+
+            // Botão atualizar
+            JButton atualizarButton = new JButton("Atualizar");
+
+            atualizarButton.addActionListener(e -> {
+                String[] opcoes = {"Planejado", "Em Andamento", "Concluído", "Cancelado"};
+                String novoStatus = (String) JOptionPane.showInputDialog(
+                        listaProjetosPanel,
+                        "Escolha o novo status:",
+                        "Atualizar Status",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        opcoes,
+                        p.getStatus()
+                );
+                if (novoStatus != null) {
+                    p.setStatus(novoStatus);
+                    dao.atualizar(p);
+                    atualizarLista();
+                }
+            });
+
+            // Botão deletar
+            JButton deletarButton = new JButton("Deletar");
+            deletarButton.addActionListener(e -> {
+                int confirm = JOptionPane.showConfirmDialog(
+                        listaProjetosPanel,
+                        "Tem certeza que deseja deletar o projeto \"" + p.getNome() + "\"?",
+                        "Confirmação",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    dao.deletar(p.getId()); // precisa ter esse metodo no ProjetoDAO
+                    atualizarLista();
+                }
+            });
+
+            JButton tarefasButton = new JButton("Gerenciar Tarefas");
+            tarefasButton.addActionListener(e -> {
+                new TarefaSwing(p.getId()).iniciar();
+            });
+
+
+            projetoPanel.add(label);
+
+            projetoPanel.add(tarefasButton);
+            projetoPanel.add(atualizarButton);
+            projetoPanel.add(deletarButton);
+
+            listaProjetosPanel.add(projetoPanel);
+        }
+
+        listaProjetosPanel.revalidate();
+        listaProjetosPanel.repaint();
     }
 }

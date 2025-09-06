@@ -69,7 +69,7 @@ public class UsuarioSwing {
             atualizarLista();
         });
 
-        inputPanel.add(addButton);
+
 
         /*JButton deleteButton = new JButton("Deletar por ID");
         deleteButton.setMargin(new Insets(10, 20, 10, 20));
@@ -98,6 +98,7 @@ public class UsuarioSwing {
             new LoginSwing().iniciar();
         });
         inputPanel.add(loginButton);
+        inputPanel.add(addButton);
 
         frame.add(inputPanel, BorderLayout.SOUTH);
 

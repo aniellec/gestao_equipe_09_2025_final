@@ -142,7 +142,7 @@ public class ProjetoDAO {
                 //"WHERE id_projeto = ?";
         //String sql = "INSERT INTO Projeto (nome, descricao, inicio, fim, id_gerente, status) VALUES (?, ?, ?, ?, ?, ?)";
         //String sql = "UPDATE INTO Projeto (nome, descricao, inicio, fim, id_gerente, status, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String sql = "UPDATE Projeto SET nome = ?, descricao = ?, inicio = ?, fim = ?, id_gerente = ?, status = ?, atualizado_em = ? WHERE id_projeto = ?";
+        String sql = "UPDATE Projeto SET nome = ?, descricao = ?, inicio = ?, fim = ?, id_gerente = ?, status = ? WHERE id_projeto = ?";
 
 
         try (Connection conn = ConexaoDB.getConnection();
@@ -154,8 +154,8 @@ public class ProjetoDAO {
             stmt.setDate(4, projeto.getFim() != null ? Date.valueOf(projeto.getFim()) : null);
             stmt.setInt(5, projeto.getIdGerente());
             stmt.setString(6, projeto.getStatus());
-            stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-            stmt.setInt(8, projeto.getId());
+            //stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+            stmt.setInt(7, projeto.getId());
 
             int rows = stmt.executeUpdate();
             return rows > 0;
@@ -165,5 +165,31 @@ public class ProjetoDAO {
             return false;
         }
     }
+
+    public List<Projeto> listarProjetos() throws SQLException {
+        List<Projeto> projetos = new ArrayList<>();
+        String sql = "SELECT id_projeto, nome, inicio, fim, status, id_gerente FROM Projeto";
+
+        //   referencia:     String sql = "UPDATE Projeto SET nome = ?, descricao = ?, inicio = ?, fim = ?, id_gerente = ?, status = ? WHERE id_projeto = ?";
+
+        try (Connection conn = ConexaoDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Projeto projeto = new Projeto(
+                        rs.getInt("id_projeto"),
+                        rs.getString("nome"),
+                        rs.getDate("inicio").toLocalDate(),
+                        rs.getDate("fim").toLocalDate(),
+                        rs.getInt("id_gerente"),
+                        rs.getString("status")
+                );
+                projetos.add(projeto);
+            }
+        }
+        return projetos;
+    }
+
 
 }

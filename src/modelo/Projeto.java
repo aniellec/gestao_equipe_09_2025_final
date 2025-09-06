@@ -3,6 +3,8 @@
 package modelo;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+
 
 public class Projeto {
 
@@ -13,6 +15,8 @@ public class Projeto {
     private LocalDate fim;
     private int idGerente; // ID do gerente responsável
     private String status;
+    //private List<Tarefa> tarefas = new ArrayList<>();
+
 
     public Projeto(String nome, String descricao, LocalDate inicio, LocalDate fim, int idGerente, String status) {
         this.nome = nome;
@@ -21,6 +25,20 @@ public class Projeto {
         this.fim = fim;
         this.idGerente = idGerente;
         this.status = status;
+    }
+
+    public Projeto(int id, String nome, LocalDate inicio, LocalDate fim, int idGerente, String status) {
+        this.id = id;
+        this.nome = nome;
+        this.inicio = inicio;
+        this.fim = fim;
+        this.idGerente = idGerente;
+        this.status = status;
+    }
+
+    public Projeto(int idProjeto, String nome) {
+        this.id = id;
+        this.nome = nome;
     }
 
     // Getters
