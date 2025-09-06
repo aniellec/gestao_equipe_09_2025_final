@@ -72,7 +72,21 @@ public class ColaboradorSwing {
             } else {
                 for (Projeto p : projetos) {
                     JLabel projetoLabel = new JLabel("- " + p.getNome() + " | Status: " + p.getStatus());
+                    projetoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
                     painelPrincipal.add(projetoLabel);
+
+                    // Lista de tarefas do projeto
+                    List<String> tarefas = projetoDAO.listarTarefasPorProjeto(p.getId());
+                    if (tarefas.isEmpty()) {
+                        painelPrincipal.add(new JLabel("   Nenhuma tarefa cadastrada."));
+                    } else {
+                        for (String t : tarefas) {
+                            painelPrincipal.add(new JLabel("   • " + t));
+                        }
+                    }
+
+                    // Espaço entre projetos
+                    painelPrincipal.add(Box.createRigidArea(new Dimension(0, 10)));
                 }
             }
         } catch (SQLException ex) {
